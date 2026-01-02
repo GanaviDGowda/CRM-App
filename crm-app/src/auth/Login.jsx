@@ -22,6 +22,11 @@ export default function Login() {
         <input className="form-control mb-2" name="email" />
         <input className="form-control mb-3" name="password" type="password" />
         <button className="btn btn-success w-100">Login</button>
+        <p className="text-center mt-3">
+  New here?{' '}
+  <a href="/signup">Create an account</a>
+</p>
+
       </form>
     </div>
   )
