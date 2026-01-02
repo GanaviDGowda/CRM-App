@@ -11,9 +11,19 @@ export default function InteractionPanel({ customerId }) {
 
   const loadInteractions = async () => {
     const { data } = await supabase
-      .from('interactions')
-      .select('*')
-      .eq('customer_id', customerId)
+    .from('interactions')
+    .select(`
+      id,
+      type,
+      note,
+      follow_up_date,
+      customers!inner (
+        name,
+        user_id
+      )
+    `)
+    .eq('customers.user_id', customerId)
+    
       .order('created_at', { ascending: false })
 
     setInteractions(data || [])

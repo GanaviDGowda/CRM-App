@@ -1,7 +1,7 @@
-import { supabase } from '../supabase'
 import { Link, useNavigate } from 'react-router-dom'
+import { supabase } from '../supabase'
 
-export default function Navbar({ role }) {
+export default function Navbar() {
   const navigate = useNavigate()
 
   const logout = async () => {
@@ -10,33 +10,32 @@ export default function Navbar({ role }) {
   }
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-      <span className="navbar-brand fw-bold">CRM App</span>
+    <nav className="navbar navbar-dark bg-dark navbar-expand">
+      <div className="container">
+        <Link className="navbar-brand" to="/dashboard">
+          CRM
+        </Link>
 
-      <div className="collapse navbar-collapse show">
-        <ul className="navbar-nav me-auto">
+        <ul className="navbar-nav">
           <li className="nav-item">
             <Link className="nav-link" to="/dashboard">Dashboard</Link>
           </li>
+
           <li className="nav-item">
             <Link className="nav-link" to="/customers">Customers</Link>
           </li>
+
+          {/* ✅ ADD CUSTOMER */}
           <li className="nav-item">
             <Link className="nav-link" to="/customers/add">Add Customer</Link>
           </li>
+
+          <li className="nav-item">
+            <Link className="nav-link" to="/followups">Follow-Ups</Link>
+          </li>
         </ul>
-        <li className="nav-item">
-            <Link className="nav-link" to="/followups">
-                Follow-Ups
-            </Link>
-            </li>
 
-
-        <span className="badge bg-warning text-dark me-3">
-          Role: {role}
-        </span>
-
-        <button className="btn btn-outline-light btn-sm" onClick={logout}>
+        <button onClick={logout} className="btn btn-outline-light btn-sm">
           Logout
         </button>
       </div>

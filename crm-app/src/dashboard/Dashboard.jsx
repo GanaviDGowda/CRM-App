@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 
 export default function Dashboard() {
-  const [role, setRole] = useState('')
   const [stats, setStats] = useState({
     customers: 0,
     interactions: 0,
@@ -15,51 +14,28 @@ export default function Dashboard() {
 
   const load = async () => {
     const { data: { user } } = await supabase.auth.getUser()
-  
-    // get role safely
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-  
-    const role = profile?.role || 'user'
-    setRole(role)
-  
+
     // customers count
-    let customersCount = 0
-  
-    if (role === 'admin') {
-      const { count } = await supabase
-        .from('customers')
-        .select('*', { count: 'exact', head: true })
-  
-      customersCount = count
-    } else {
-      const { count } = await supabase
-        .from('customers')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-  
-      customersCount = count
-    }
-  
-    // interactions count
-    const { count: interactionsCount } = await supabase
+    const { count: customers } = await supabase
+      .from('customers')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+
+    // interactions count (via customers)
+    const { count: interactions } = await supabase
       .from('interactions')
-      .select('*', { count: 'exact', head: true })
-  
-    setStats({
-      customers: customersCount,
-      interactions: interactionsCount,
-    })
+      .select(
+        'id, customers!inner(user_id)',
+        { count: 'exact', head: true }
+      )
+      .eq('customers.user_id', user.id)
+
+    setStats({ customers, interactions })
   }
-  
-  
 
   return (
     <>
-      <Navbar role={role} />
+      <Navbar />
 
       <div className="container mt-4">
         <h4 className="mb-4">Dashboard Overview</h4>

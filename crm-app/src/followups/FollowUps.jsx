@@ -12,17 +12,8 @@ export default function FollowUps() {
 
   const loadFollowUps = async () => {
     const { data: { user } } = await supabase.auth.getUser()
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    const userRole = profile?.role || 'user'
-    setRole(userRole)
-
-    let baseQuery = supabase
+  
+    const { data } = await supabase
       .from('interactions')
       .select(`
         id,
@@ -34,13 +25,14 @@ export default function FollowUps() {
           user_id
         )
       `)
+      .eq('customers.user_id', user.id)
       .not('follow_up_date', 'is', null)
       .gte('follow_up_date', new Date().toISOString().split('T')[0])
       .order('follow_up_date', { ascending: true })
-
-    const { data } = await baseQuery
+  
     setFollowUps(data || [])
   }
+  
 
   return (
     <>

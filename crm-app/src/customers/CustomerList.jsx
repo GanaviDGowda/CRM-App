@@ -19,26 +19,17 @@ export default function CustomerList() {
 
   const loadCustomers = async () => {
     const { data: { user } } = await supabase.auth.getUser()
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    const userRole = profile?.role || 'user'
-    setRole(userRole)
-
-    let query = supabase.from('customers').select('*')
-
-    if (userRole !== 'admin') {
-      query = query.eq('user_id', user.id)
-    }
-
-    const { data } = await query.order('created_at', { ascending: false })
+  
+    const { data } = await supabase
+      .from('customers')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+  
     setCustomers(data || [])
     setFiltered(data || [])
   }
+  
 
   const applySearch = () => {
     if (!search.trim()) {
